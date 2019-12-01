@@ -3,14 +3,14 @@ My solutions to Advent of Code 2019, in Python.
 
 ## Project structure
 ```
-├── aoc19.py                        -- CLI tool for running solutions
+├── aoc19.py                          -- CLI tool for running solutions
 ├── days
-│   ├── day01.py                    -- Code for solving day 1
-│   ├── day02.py                    -- Code for solving day 2
+│   ├── day01.py                      -- Module for solving day 1
+│   ├── day02.py                      -- Module for solving day 2
 │   ├── ...
 │   └── input
-│       ├── day01.txt               -- Official puzzle input for day 1
-│       ├── day02.txt               -- Official puzzle input for day 1
+│       ├── day01.txt                 -- Official puzzle input for day 1
+│       ├── day02.txt                 -- Official puzzle input for day 1
 │       └── ...
 ├── README.md
 └── tests
