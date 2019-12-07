@@ -14,7 +14,6 @@ class TestDay04(unittest.TestCase):
         self.assertTrue(contains_exactly_two_adjacent([1, 1, 2, 2, 3, 3]))
         self.assertFalse(contains_exactly_two_adjacent([1, 2, 3, 4, 4, 4]))
         self.assertTrue(contains_exactly_two_adjacent([1, 1, 1, 1, 2, 2]))
-        self.assertFalse(contains_exactly_two_adjacent([1, 2, 3, 4, 5, 2]))
 
     def test_non_decreasing_digits(self):
         digit_range = non_decreasing_digits(234548, 234568)

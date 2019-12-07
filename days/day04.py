@@ -38,7 +38,8 @@ def contains_two_adjacent(digits):
 
 
 def contains_exactly_two_adjacent(digits):
-    return contains_two_adjacent(digits) and 2 in Counter(digits).values()
+    # Only correct for non-descending digits
+    return 2 in Counter(digits).values()
 
 
 def solve_puzzle_part(puzzle_input, validation_fun):
