@@ -1,62 +1,28 @@
-class Program:
-    def __init__(self, initial_mem):
-        self.initial_memory = initial_mem.copy()
-        self.memory = initial_mem
-        self.ip = 0  # instruction pointer
-        self.halted = False
-
-    def execute_next_op(self):
-        instruction = self.memory[self.ip]
-        if instruction == 99:
-            self.halted = True
-        else:
-            pos1 = self.memory[self.ip + 1]
-            pos2 = self.memory[self.ip + 2]
-            dest = self.memory[self.ip + 3]
-
-            if instruction == 1:
-                self.memory[dest] = self.memory[pos1] + self.memory[pos2]
-                self.ip += 4
-            elif instruction == 2:
-                self.memory[dest] = self.memory[pos1] * self.memory[pos2]
-                self.ip += 4
-
-    def execute_till_halted(self):
-        while not self.halted:
-            self.execute_next_op()
-
-    def reset(self):
-        self.memory = self.initial_memory.copy()
-        self.ip = 0
-        self.halted = False
-
-    def run(self, *inputs):
-        """
-        Place the inputs in addresses 1 and up, execute the program till it halts, and return the memory at address 0.
-        """
-        self.reset()
-        self.memory[1:1 + len(inputs)] = inputs
-        self.execute_till_halted()
-        return self.memory[0]
+from days.intcode_computer import Program
 
 
-def parse_puzzle_input(puzzle_input):
-    return [int(i) for i in puzzle_input.split(',')]
+def run_program(program, input1, input2):
+    # In day 2 we don't yet make use of the intcode computer's native I/O system, but we input 2 numbers at
+    # memory locations 1 and 2 instead, and read the output from location 0
+
+    program.memory[1] = input1
+    program.memory[2] = input2
+    program.execute_till_halted()
+    return program.memory[0]
 
 
 def solve_part_1(puzzle_input):
-    ints = parse_puzzle_input(puzzle_input)
-    program = Program(ints)
+    program = Program(puzzle_input)
 
-    return program.run(12, 2)
+    return run_program(program, 12, 2)
 
 
 def solve_part_2(puzzle_input):
-    ints = parse_puzzle_input(puzzle_input)
-    program = Program(ints)
+    program = Program(puzzle_input)
 
     for noun in range(100):
         for verb in range(100):
-            if program.run(noun, verb) == 19690720:
+            program.reset()
+            if run_program(program, noun, verb) == 19690720:
                 return 100 * noun + verb
 
