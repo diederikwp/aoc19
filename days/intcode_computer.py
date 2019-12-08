@@ -1,3 +1,6 @@
+from collections import deque
+
+
 class Program:
     # Todo: explain public interface in docstring
 
@@ -11,8 +14,8 @@ class Program:
         self.initial_memory = initial_mem.copy()
         self.memory = initial_mem.copy()
 
-        self.inputs = []
-        self.outputs = []
+        self.inputs = deque()
+        self.outputs = deque()
 
         self.ip = 0  # instruction pointer
         self.halted = False
@@ -55,6 +58,12 @@ class Program:
     def exec_op_equals(self, val1, val2, result_address):
         self.memory[result_address] = int(val1 == val2)
 
+    def exec_op_input(self, result_address):
+        if not self.inputs:
+            raise InputRequiredError
+
+        self.memory[result_address] = self.inputs.popleft()
+
     def exec_op_jump_false(self, val1, jump_address):
         if val1 == 0:
             self.ip = jump_address
@@ -69,9 +78,6 @@ class Program:
 
     def exec_op_less_than(self, val1, val2, result_address):
         self.memory[result_address] = int(val1 < val2)
-
-    def exec_op_input(self, result_address):
-        self.memory[result_address] = self.inputs.pop()
 
     def exec_op_mult(self, val1, val2, result_address):
         self.memory[result_address] = val1 * val2
@@ -114,15 +120,20 @@ class Program:
     def reset(self):
         self.memory = self.initial_memory.copy()
 
-        self.inputs = []
-        self.outputs = []
+        self.inputs = deque()
+        self.outputs = deque()
 
         self.ip = 0
         self.halted = False
 
-    def run(self, inputs=None):
-        if inputs is None:
-            inputs = []
-        self.inputs = list(reversed(inputs))  # Reversed because this allows "pop"'ing the inputs
-        self.exec_all()
-        return self.outputs
+    def run(self):
+        try:
+            self.exec_all()
+        except InputRequiredError:
+            pass  # We simply return in non-halted state. Continue by calling run again after supplying more inputs
+
+        return
+
+
+class InputRequiredError(Exception):
+    pass

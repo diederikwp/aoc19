@@ -1,4 +1,5 @@
 import unittest
+from collections import deque
 
 from days.intcode_computer import Program
 
@@ -43,88 +44,162 @@ class TestProgram(unittest.TestCase):
     def test_prog_7(self):
         # input
         program = Program([3, 2, 0, 4, 0])
-        out = program.run([3, 99])
-        self.assertEqual(out, [])
+        program.inputs.extend([3, 99])
+        program.run()
+        self.assertEqual(program.outputs, deque())
         self.assertEqual(program.memory, [3, 2, 3, 4, 99])
 
     def test_prog_8(self):
         # output
         program = Program([101, -93, 0, 5, 4, -1, 4, 0, 99])
-        out = program.run()
-        self.assertEqual(out, [99, 101])
+        program.run()
+        self.assertEqual(list(program.outputs), [99, 101])
         self.assertEqual(program.memory, [101, -93, 0, 5, 4, 8, 4, 0, 99])
 
     def test_prog_9(self):
         # input and output
         program = Program('3,0,4,0,99')
-        out = program.run([1337])
-        self.assertEqual(out, [1337])
+        program.inputs.append(1337)
+        program.run()
+        self.assertEqual(list(program.outputs), [1337])
 
     def test_prog_10(self):
         # equals, position mode. Program tests whether input equals 8.
         program = Program('3,9,8,9,10,9,4,9,99,-1,8')
-        self.assertEqual(program.run([8]), [1])
+
+        program.inputs.append(8)
+        program.run()
+        self.assertEqual(list(program.outputs), [1])
+
         program.reset()
-        self.assertEqual(program.run([-8]), [0])
+        program.inputs.append(-8)
+        program.run()
+        self.assertEqual(list(program.outputs), [0])
+
         program.reset()
-        self.assertEqual(program.run([4]), [0])
+        program.inputs.append(4)
+        program.run()
+        self.assertEqual(list(program.outputs), [0])
+
         program.reset()
-        self.assertEqual(program.run([40]), [0])
+        program.inputs.append(40)
+        program.run()
+        self.assertEqual(list(program.outputs), [0])
 
     def test_prog_11(self):
         # equals, immediate mode. Program tests whether input equals 8.
         program = Program('3,3,1108,-1,8,3,4,3,99')
-        self.assertEqual(program.run([8]), [1])
+
+        program.inputs.append(8)
+        program.run()
+        self.assertEqual(list(program.outputs), [1])
+
         program.reset()
-        self.assertEqual(program.run([-8]), [0])
+        program.inputs.append(-8)
+        program.run()
+        self.assertEqual(list(program.outputs), [0])
+
         program.reset()
-        self.assertEqual(program.run([4]), [0])
+        program.inputs.append(4)
+        program.run()
+        self.assertEqual(list(program.outputs), [0])
+
         program.reset()
-        self.assertEqual(program.run([40]), [0])
+        program.inputs.append(40)
+        program.run()
+        self.assertEqual(list(program.outputs), [0])
 
     def test_prog_12(self):
         # less than, position mode. Program tests whether input is less than 8.
         program = Program('3,9,7,9,10,9,4,9,99,-1,8')
-        self.assertEqual(program.run([7]), [1])
+
+        program.inputs.append(7)
+        program.run()
+        self.assertEqual(list(program.outputs), [1])
+
         program.reset()
-        self.assertEqual(program.run([6]), [1])
+        program.inputs.append(6)
+        program.run()
+        self.assertEqual(list(program.outputs), [1])
+
         program.reset()
-        self.assertEqual(program.run([-11]), [1])
+        program.inputs.append(-11)
+        program.run()
+        self.assertEqual(list(program.outputs), [1])
+
         program.reset()
-        self.assertEqual(program.run([8]), [0])
+        program.inputs.append(8)
+        program.run()
+        self.assertEqual(list(program.outputs), [0])
+
         program.reset()
-        self.assertEqual(program.run([60]), [0])
+        program.inputs.append(60)
+        program.run()
+        self.assertEqual(list(program.outputs), [0])
 
     def test_prog_13(self):
         # less than, immediate mode. Program tests whether input is less than 8.
         program = Program('3,3,1107,-1,8,3,4,3,99')
-        self.assertEqual(program.run([7]), [1])
+
+        program.inputs.append(7)
+        program.run()
+        self.assertEqual(list(program.outputs), [1])
+
         program.reset()
-        self.assertEqual(program.run([6]), [1])
+        program.inputs.append(6)
+        program.run()
+        self.assertEqual(list(program.outputs), [1])
+
         program.reset()
-        self.assertEqual(program.run([-11]), [1])
+        program.inputs.append(-11)
+        program.run()
+        self.assertEqual(list(program.outputs), [1])
+
         program.reset()
-        self.assertEqual(program.run([8]), [0])
+        program.inputs.append(8)
+        program.run()
+        self.assertEqual(list(program.outputs), [0])
+
         program.reset()
-        self.assertEqual(program.run([60]), [0])
+        program.inputs.append(60)
+        program.run()
+        self.assertEqual(list(program.outputs), [0])
 
     def test_prog_14(self):
         # jumps, position mode. Program tests whether input is nonzero
         program = Program('3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9')
-        self.assertEqual(program.run([0]), [0])
+
+        program.inputs.append(0)
+        program.run()
+        self.assertEqual(list(program.outputs), [0])
+
         program.reset()
-        self.assertEqual(program.run([1]), [1])
+        program.inputs.append(1)
+        program.run()
+        self.assertEqual(list(program.outputs), [1])
+
         program.reset()
-        self.assertEqual(program.run([-1]), [1])
+        program.inputs.append(-1)
+        program.run()
+        self.assertEqual(list(program.outputs), [1])
 
     def test_prog_15(self):
         # jumps, immediate mode. Program tests whether input is nonzero
         program = Program('3,3,1105,-1,9,1101,0,0,12,4,12,99,1')
-        self.assertEqual(program.run([0]), [0])
+
+        program.inputs.append(0)
+        program.run()
+        self.assertEqual(list(program.outputs), [0])
+
         program.reset()
-        self.assertEqual(program.run([1]), [1])
+        program.inputs.append(1)
+        program.run()
+        self.assertEqual(list(program.outputs), [1])
+
         program.reset()
-        self.assertEqual(program.run([-1]), [1])
+        program.inputs.append(-1)
+        program.run()
+        self.assertEqual(list(program.outputs), [1])
 
     def test_prog_16(self):
         # slightly larger test of opcodes 1--8, 99. Program outputs 999 if input is below 8, 1000 if input equals 8 and
@@ -133,15 +208,45 @@ class TestProgram(unittest.TestCase):
                           '1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,'
                           '999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99')
 
-        self.assertEqual(program.run([0]), [999])
+        program.inputs.append(0)
+        program.run()
+        self.assertEqual(list(program.outputs), [999])
+
         program.reset()
-        self.assertEqual(program.run([7]), [999])
+        program.inputs.append(7)
+        program.run()
+        self.assertEqual(list(program.outputs), [999])
+
         program.reset()
-        self.assertEqual(program.run([8]), [1000])
+        program.inputs.append(8)
+        program.run()
+        self.assertEqual(list(program.outputs), [1000])
+
         program.reset()
-        self.assertEqual(program.run([9]), [1001])
+        program.inputs.append(9)
+        program.run()
+        self.assertEqual(list(program.outputs), [1001])
+
         program.reset()
-        self.assertEqual(program.run([70]), [1001])
+        program.inputs.append(70)
+        program.run()
+        self.assertEqual(list(program.outputs), [1001])
+
+    def test_prog_17(self):
+        # multiple inputs, not all at once
+        program = Program([3, 5, 3, 6, 1102, -1, -1, 9, 104, -1, 3, 11, 1, 11, 0, 17, 4, -1, 99])
+
+        program.inputs.extend([2, 10])
+        program.run()
+        self.assertEqual(list(program.outputs), [20])
+        self.assertFalse(program.halted)
+        self.assertEqual(program.inputs, deque())
+
+        program.inputs.append(5)
+        program.run()
+        self.assertEqual(list(program.outputs), [20, 104])
+        self.assertTrue(program.halted)
+        self.assertEqual(program.inputs, deque())
 
     def test_reset(self):
         ints = [2, 4, 4, 5, 99, 0]
