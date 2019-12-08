@@ -7,7 +7,7 @@ def run_program(program, input1, input2):
 
     program.memory[1] = input1
     program.memory[2] = input2
-    program.execute_till_halted()
+    program.exec_all()
     return program.memory[0]
 
 

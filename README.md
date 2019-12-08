@@ -1,6 +1,10 @@
 # Advent of Code 2019
 My solutions to Advent of Code 2019, in Python.
 
+This code is not equipped to
+handle invalid input gracefully, since it is just for solving synthetic
+puzzles.
+
 ## Project structure
 ```
 ├── aoc19.py                          -- CLI tool for running solutions
