@@ -28,7 +28,7 @@ puzzles.
     └── ...
 ```
 ## CLI tool
-Puzzles can be solved by executing aoc19.py. Type `./aoc19.py -h` for help.
+Puzzles can be solved by executing aoc19.py. Type `./aoc19.py -h` for help (`python aoc19.py -h` on Windows).
 
 ## Tests
 Run all tests by typing `python -m unittest` in the project root.
