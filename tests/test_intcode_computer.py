@@ -1,7 +1,7 @@
 import unittest
 from collections import deque
 
-from days.intcode_computer import Program
+from days.intcode_computer import InfiniteList, Program
 
 
 class TestProgram(unittest.TestCase):
@@ -248,8 +248,29 @@ class TestProgram(unittest.TestCase):
         self.assertTrue(program.halted)
         self.assertEqual(program.inputs, deque())
 
+    def test_prog_18(self):
+        # relative mode and expanding memory beyond initial size
+        program = Program('109,1,204,-1,1001,100,1,100,1008,100,16,101,1006,101,0,99')
+        program.run()
+        self.assertEqual(list(program.outputs),
+                         [109, 1, 204, -1, 1001, 100, 1, 100, 1008, 100, 16, 101, 1006, 101, 0,  99])
+
+    def test_prog_19(self):
+        # Big ints
+        program = Program('1102,34915192,34915192,7,4,7,99,0')
+        program.run()
+        self.assertEqual(len(program.outputs), 1)
+        self.assertEqual(len(str(program.outputs[0])), 16)  # day 9 "should output a 16-digit number"
+
+    def test_prog_20(self):
+        # Big ints
+        program = Program('104,1125899906842624,99')
+        program.run()
+        self.assertEqual(len(program.outputs), 1)
+        self.assertEqual(program.outputs[0], 1125899906842624)
+
     def test_reset(self):
-        ints = [2, 4, 4, 5, 99, 0]
+        ints = [109, -3, 2002, 6, 9, 7, 99, 0]
         program = Program(ints)
         program.run()
         self.assertNotEqual(program.ip, 0)
@@ -259,7 +280,75 @@ class TestProgram(unittest.TestCase):
         self.assertEqual(program.ip, 0)
         program.run()
         self.assertNotEqual(program.ip, 0)
-        self.assertEqual(program.memory, [2, 4, 4, 5, 99, 9801])
+        self.assertEqual(program.memory, [109, -3, 2002, 6, 9, 7, 99, 9801])
+
+
+class TestInfiniteList(unittest.TestCase):
+    def test_getitem(self):
+        il = InfiniteList([1, 2, 3])
+
+        # Before expanding
+        self.assertEqual(il[0], 1)
+        self.assertEqual(il[1], 2)
+        self.assertEqual(il[2], 3)
+
+        # Expand with integer key
+        self.assertEqual(il[5], 0)
+        self.assertEqual(il[8], 0)
+        self.assertEqual(il, [1, 2, 3, 0, 0, 0, 0, 0, 0])
+
+        # Expand with slice key
+        self.assertEqual(il[2:10], [3, 0, 0, 0, 0, 0, 0, 0])
+        self.assertEqual(il[5:8], [0, 0, 0])
+        self.assertEqual(il, [1, 2, 3, 0, 0, 0, 0, 0, 0, 0])
+
+    def test_setitem(self):
+        il = InfiniteList([1, 2, 3])
+
+        il[1] = 4
+        self.assertEqual(il, [1, 4, 3])
+
+        il[5] = -1
+        self.assertEqual(il, [1, 4, 3, 0, 0, -1])
+
+        il[4:7] = [10, 11, 12]
+        self.assertEqual(il, [1, 4, 3, 0, 10, 11, 12])
+
+    def test_insert(self):
+        il = InfiniteList([1, 2, 3])
+
+        il.insert(0, 9)
+        il.insert(2, 9)
+        il.insert(5, 9)
+        self.assertEqual(il, [9, 1, 9, 2, 3, 9])
+
+        il.insert(7, 7)
+        self.assertEqual(il, [9, 1, 9, 2, 3, 9, 0, 7])
+
+    def test_iter(self):
+        il = InfiniteList([1, 2, 3])
+        self.assertEqual([i for i in il], [1, 2, 3])
+
+        il[5] = 5
+        self.assertEqual([i for i in il], [1, 2, 3, 0, 0, 5])
+
+    def test_negative_key(self):
+        il = InfiniteList([1, 2, 3])
+
+        with self.assertRaises(IndexError):
+            il[-1]
+        with self.assertRaises(IndexError):
+            il[0:-1]
+        with self.assertRaises(IndexError):
+            il[-3:-1]
+        with self.assertRaises(IndexError):
+            il[-3:0]
+        with self.assertRaises(IndexError):
+            il[-2] = 0
+        with self.assertRaises(IndexError):
+            il[0:-1] = [10, 11]
+        with self.assertRaises(IndexError):
+            il.insert(-2, 0)
 
 
 if __name__ == '__main__':
