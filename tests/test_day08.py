@@ -10,12 +10,12 @@ class TestDay08(unittest.TestCase):
         self.assertEqual(combine_layers(layers, 2, 2), '0110')
 
     def test_render_image(self):
-        flat_image = '#    #    #### #  # #### '
-        rendered_image = '#    \n' + \
-                         '#    \n' + \
-                         '#### \n' + \
-                         '#  # \n' + \
-                         '#### \n'
+        flat_image = '1    1    1111 1  1 1111 '
+        rendered_image = '#    \n' \
+                         + '#    \n' \
+                         + '#### \n' \
+                         + '#  # \n' \
+                         + '#### \n'
 
         self.assertEqual(render_image(flat_image, 5, 5), rendered_image)
 
@@ -33,3 +33,13 @@ class TestDay08(unittest.TestCase):
         puzzle_input = Path('tests/input/test_input_day08_01.txt').read_text()
         self.assertEqual(solve_part_1(puzzle_input), 438)
 
+    def test_solve_part_2(self):
+        puzzle_input = Path('tests/input/test_input_day08_02.txt').read_text()
+        rendered = '# # # # # # # # # # # # #\n' \
+                   + '#########################\n' \
+                   + '#                       #\n' \
+                   + '#                       #\n' \
+                   + '#                       #\n' \
+                   + '#           #           #\n'
+
+        self.assertEqual(solve_part_2(puzzle_input), rendered)
