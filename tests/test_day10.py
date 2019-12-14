@@ -1,7 +1,7 @@
 import unittest
 
 from pathlib import Path
-from days.day10 import parse_puzzle_input, count_num_visible, solve_part_1
+from days.day10 import parse_puzzle_input, count_num_visible, solve_part_1, solve_part_2
 
 
 class TestDay10(unittest.TestCase):
@@ -48,3 +48,6 @@ class TestDay10(unittest.TestCase):
         self.assertEqual(solve_part_1(self.test_input_3), 35)
         self.assertEqual(solve_part_1(self.test_input_4), 41)
         self.assertEqual(solve_part_1(self.test_input_5), 210)
+
+    def test_solve_part_2(self):
+        self.assertEqual(solve_part_2(self.test_input_5), 802)
