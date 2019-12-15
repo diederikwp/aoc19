@@ -1,7 +1,7 @@
 import unittest
 
 from pathlib import Path
-from days.day10 import parse_puzzle_input, count_num_visible, solve_part_1, solve_part_2
+from days.day10 import parse_puzzle_input, count_num_visible, group_asteroids_by_direction, solve_part_1, solve_part_2
 
 
 class TestDay10(unittest.TestCase):
