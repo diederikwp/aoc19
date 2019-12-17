@@ -1,3 +1,6 @@
+from math import gcd
+
+
 class Moon:
     def __init__(self, x, y, z):
         self.pos = [x, y, z]
@@ -64,6 +67,15 @@ def parse_puzzle_input(puzzle_input):
     return moons
 
 
+def lcm(*args):
+    # lowest common multiple
+    ret = args[0] * args[1] // gcd(args[0], args[1])
+    for i in range(1, len(args)):
+        ret = ret * args[i] // gcd(ret, args[i])
+
+    return abs(ret)
+
+
 def solve_part_1(puzzle_input):
     moons = parse_puzzle_input(puzzle_input)
     moon_sim = MoonSimulation(moons)
@@ -72,3 +84,30 @@ def solve_part_1(puzzle_input):
         moon_sim.step()
 
     return moon_sim.total_energy
+
+
+def solve_part_2(puzzle_input):
+    # Determine period of x, y and z coordinates separately. The entire (x, y, z) state repeats at the lowest common
+    # multiple of those 3 periods, since the x, y and z motions are independent.
+    moons = parse_puzzle_input(puzzle_input)
+    moon_sim = MoonSimulation(moons)
+
+    history = [set(), set(), set()]  # x, y, z
+    periods = [None, None, None]
+    periods_known = [False, False, False]
+
+    while not all(periods_known):
+        for dim in range(3):
+            if periods_known[dim]:
+                continue
+
+            state = tuple(((m.pos[dim], m.velocity[dim]) for m in moon_sim.moons))
+            if state in history[dim]:
+                periods[dim] = moon_sim.steps
+                periods_known[dim] = True
+
+            history[dim].add(state)
+
+        moon_sim.step()
+
+    return lcm(periods[0], periods[1], periods[2])
