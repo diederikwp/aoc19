@@ -1,11 +1,13 @@
 def get_required_fuel(mass, recursive=False):
-    fuel = mass // 3 - 2
-    fuel = 0 if fuel < 0 else fuel
+    total_fuel = max(mass // 3 - 2, 0)
 
-    if fuel == 0 or not recursive:
-        return fuel
+    if recursive:
+        fuel = total_fuel
+        while fuel > 0:
+            fuel = max(fuel // 3 - 2, 0)
+            total_fuel += fuel
 
-    return fuel + get_required_fuel(fuel, recursive)
+    return total_fuel
 
 
 def parse_puzzle_input(puzzle_input):
