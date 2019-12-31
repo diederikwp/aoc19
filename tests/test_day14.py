@@ -1,7 +1,7 @@
 import unittest
 from pathlib import Path
 
-from days.day14 import parse_puzzle_input, Material, solve_part_1
+from days.day14 import parse_puzzle_input, Material, solve_part_1, solve_part_2
 
 
 class TestDay14(unittest.TestCase):
@@ -29,3 +29,9 @@ class TestDay14(unittest.TestCase):
         self.assertEqual(solve_part_1(self.puzzle_input_4), 180697)
         self.assertEqual(solve_part_1(self.puzzle_input_5), 2210736)
         self.assertEqual(solve_part_1(self.puzzle_input_6), 2)
+
+    def test_solve_part_2(self):
+        self.assertEqual(solve_part_2(self.puzzle_input_3), 82892753)
+        self.assertEqual(solve_part_2(self.puzzle_input_4), 5586022)
+        self.assertEqual(solve_part_2(self.puzzle_input_5), 460664)
+

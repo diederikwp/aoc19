@@ -1,4 +1,5 @@
 from collections import defaultdict, namedtuple
+from functools import partial
 
 Material = namedtuple('Material', ['name', 'amount'])
 
@@ -17,8 +18,8 @@ def parse_puzzle_input(puzzle_input):
     return reactions
 
 
-def ore_required(reactions):
-    required = {"FUEL": 1}
+def ore_required(reactions, fuel_to_produce=1):
+    required = {"FUEL": fuel_to_produce}
     remaining = defaultdict(int)
 
     ore_amount = 0
@@ -45,6 +46,45 @@ def ore_required(reactions):
     return ore_amount
 
 
+def find_upper_lim_arg(fun, start, limit_val):
+    # Fun should increase monotonically
+    lim = start
+    while fun(lim) < limit_val:
+        lim *= 2
+
+    return lim
+
+
+def bin_search_glb(fun, lower_lim, upper_lim, target):
+    """
+    Return the greatest lower bound (glb) of the set of argument values between lower_lim and upper_lim (inclusive) for
+    which fun(arg) < target, using binary search.
+
+    :param fun: Monotonically increasing function of a single int; does not have to be strictly monotonic
+    :param lower_lim: Any integer s.t. fun(lower_lim) < target and lower_lim < upper_lim
+    :param upper_lim: Any integer s.t. fun(upper_lim) > target and lower_lim < upper_lim
+    :param target: The search target
+    :return: Integer glb
+    """
+
+    while upper_lim - lower_lim > 1:
+        mid = lower_lim + (upper_lim - lower_lim) // 2
+        if fun(mid) <= target:
+            lower_lim = mid
+        else:
+            upper_lim = mid
+
+    return lower_lim
+
+
 def solve_part_1(puzzle_input):
     reactions = parse_puzzle_input(puzzle_input)
     return ore_required(reactions)
+
+
+def solve_part_2(puzzle_input):
+    reactions = parse_puzzle_input(puzzle_input)
+    search_fun = partial(ore_required, reactions)
+    lower_lim = 0
+    upper_lim = find_upper_lim_arg(search_fun, 1, int(1e12))
+    return bin_search_glb(search_fun, lower_lim, upper_lim, int(1e12) + 1)
